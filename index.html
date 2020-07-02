@@ -1,0 +1,167 @@
+<html>
+<head>
+
+
+
+<script>
+
+	
+
+	let allchars = [ 
+			[ 'Aizen',  'Urahara', 'HP', 34  ],
+			[ 'Aizen',  'Gin', 'ATK', 17 ],
+			[ 'Aizen',  'IchigoSR', 'ATK', 12  ],
+			[ 'AizenArrancar',  'Aizen', 'ATK', 18  ], 
+			
+			[ 'AizenArrancar',  'MugetsuIchigo', 'HP', 44  ], 
+			[ 'AizenArrancar',  'FinalFusionAizen', 'ATK', 21  ], 
+			[ 'AizenArrancar',  'WhiteDayAizen', 'Armor', 38  ], 
+			[ 'AizenArrancar',  'ParasolGrimmjow', 'HP', 40  ], 
+			
+			
+			];
+
+	var allcharsmap= {
+        'AizenArrancar': ['MugetsuIchigo', 'FinalFusionAizen', 'WhiteDayAizen', 'ParasolGrimmjow', 'Aizen',
+        'SpiritGin', 'SummerHalibel', 'Kuukaku', 'SpiritGrimmjow', 'ChristmasHiyori', 'AdultNel',
+        'Starrk', 'Yammy', 'CaptainShinji', 'Ulquiorra', 'LittleNel', 'Szayelaporro', 'Genryusai',
+        'ChristmasLisa', 'ChristmasSajin', 'DangaiIchigo', 'ArrancarGin', 'Aizen'
+        
+        ],
+        'Aizen': ['Urahara']
+       
+        }
+
+/*
+
+	Armor 38%
+	HP 40%	
+	ATK 21%	
+	Armor 38%
+	HP 40%	
+	ATK 21%	
+	Armor 38%
+	HP 40%	
+ SP	ATK 21%	
+	Armor 36%
+	HP 40%	
+	ATK 19%	
+Tosen	Armor 35%
+Halloween Toshiro HP 40%	
+	ATK 19%		
+Ichigo SR	HP 26%	
+	ATK 19%		
+Halibel	ATK 19%		
+Cacao Halibel	ATK 19%		
+	ATK 19%		
+	ATK 19%		
+Shinji	ATK 19%		
+Ulquiorra	ATK 19%		
+Captain Urahara	ATK 19%		
+	ATK 18%		
+Grimmjow	ATK 18%	
+	
+*/
+
+	let teamsize = 6
+	
+	var result = Array(teamsize)
+	var res = []
+	
+	function combine(input, len, start) {
+	  if(len === 0) {
+	   // console.log( result.join(" ") ); //process here the result
+	    //res.push(result.slice())
+	    printteam(result.slice())
+	    return;
+	  }
+	  for (let i = start; i <= input.length - len; i++) {
+	    result[result.length - len] = input[i];
+	    combine(input, len-1, i+1 );
+	  }
+	}
+	
+	
+	function calculateTeam() {
+  		//parse the data from document.getElementById("ownchars").text  into mychars array
+  		
+  		var area = document.getElementById("ownchars");             
+		var mychars = area.value.replaceAll(" ","").replace(/\t/g,"").replace(/\r\n/g,"\n").split("\n");
+		
+		document.getElementById("presentation").innerHTML = '';
+  		
+		combine(mychars, teamsize, 0)
+  		
+
+  		
+	}
+	
+	function isBound(main, bound){
+
+		if(allcharsmap[main] ==null) return false;
+		var bonds = allcharsmap[main];
+		
+		return bonds.includes(bound);
+		
+	}
+	
+	function teamValid(team){
+
+	//	if(team[teamsize-1] == null) return false;
+	//	if(team[teamsize-1].length == 0) return false;
+		
+		for(i=1;i< teamsize; i++){
+			if(!isBound(team[0],team[i])) return false;
+		}
+		
+
+		return true;
+		
+	}
+	
+	function printteam(team){
+	
+
+		if( teamValid(team) ){
+			document.getElementById("presentation").innerHTML += team+'<br/>';
+		}
+
+	}
+	
+	
+	
+	
+</script>
+
+</head>
+
+<body>
+
+
+	<div id="instructions"></div>
+	<div id="input-data">
+		<textarea id="ownchars" >
+		Aizen
+		Aizen Arrancar
+		Mugetsu Ichigo
+		Aizen Arrancar
+Parasol Grimmjow
+Dangai Ichigo
+Halibel
+Cacao Halibel
+Christmas Lisa
+Christmas Sajin
+CaptainShinji
+Ulquiorra
+	LittleNel
+
+			  </textarea>
+		<button onclick="calculateTeam()">Calculate Team</button>
+	</div>
+
+	<div id="presentation"></div>
+	
+
+</body>
+
+</html>
