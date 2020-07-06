@@ -36,25 +36,23 @@
 
 </head>
 
-<body>
+<body onload="setupdata()">
 
 <div class="container">
 
 	<div class="center" id="instructions" >
-	Copy paste your characters below, one character per line. Below characters are provided as example data  </div>
+	Click your characters below, add one character per line. Some characters are provided as example data  </div>
 
 	<hr >
-	
+	<div class="center" id="inputdata"></div>
 	<div class="center" id="input-data">
-		<textarea id="ownchars" rows="40" cols="30" >
-AizenArrancar
+		<textarea id="ownchars" rows="40" cols="30" >Arrancar Aizen
 Aizen
 MugetsuIchigo
 FinalFusionAizen
 WhiteDayAizen
 ParasolGrimmjow
-DangaiIchigo
-			  </textarea>
+DangaiIchigo</textarea>
 		<button class="button button2" onclick="calculateTeam()">Calculate Team</button>
 	</div>
 	
