@@ -8,6 +8,117 @@
 	
 			}
 
+	function setupdata(){
+		//populate the all chars structure
+		for(let i=0; i< rawchars.length; i++){
+			
+			rawchars[i][0]=rawchars[i][0].replace(/\s/g, '');
+			rawchars[i][1]=rawchars[i][1].replace(/\s/g, '');
+			
+			
+			if(rawchars[i][0].length >0 && rawchars[i][1].length >0){ 
+			
+				let main = allchars[rawchars[i][0]]
+				if(main == null){
+					allchars[rawchars[i][0]]= new Array();
+					main = allchars[rawchars[i][0]]
+				}
+				
+				main.push({name: rawchars[i][1], type: rawchars[i][2], prc: rawchars[i][3] });
+			}
+		}
+		
+		
+		for (let m in allchars){
+			
+			
+			document.getElementById( 'inputdata' ).innerHTML 
+				+= "<label onclick='addcharval(this)'> "+m+"</label>, "
+	
+		} 
+		
+	}
+	
+	function addcharval(char){
+		document.getElementById( 'ownchars' ).value += '\n'+ char.textContent.trim();
+	}
+    
+
+	
+
+	let teamcount = 1
+	let teamsize = 6
+	let allteamssize = teamsize * teamcount
+	
+	var result = Array(allteamssize)
+	
+	function combine(input, len, start) {
+	  if(len === 0) {
+	    printteam(result.slice())
+	    return;
+	  }
+	  for (let i = start; i <= input.length - len; i++) {
+	    result[result.length - len] = input[i];
+	    combine(input, len-1, i+1 );
+	  }
+	}
+	
+	
+
+	const calculateTeamFor = (main, havebonds) => {
+
+        if(havebonds.length >0 ){
+
+            document.getElementById("presentation").innerHTML += '<p>Main '+ main+'<br/>';
+            combine(havebonds, teamsize -1, 0);
+        }
+		
+	}
+
+
+	const calculateAll = (arr) => {
+		
+		for(let i=0; i< arr.length; i++){
+			
+			let main = arr[i];
+			let bonds = allchars[main];
+			if( bonds!= null && bonds.length >= teamsize -1 ){
+			
+				calculateTeamFor(main, bonds.filter(x => arr.includes(x.name)))
+			}
+		}
+	}
+	
+	
+	function calculateTeam() {
+  		//parse the data from document.getElementById("ownchars").text  into mychars array
+  		
+  		var area = document.getElementById("ownchars");             
+		var mychars = area.value.replaceAll(" ","").replace(/\t/g,"").replace(/\r\n/g,"\n").split("\n");
+		
+		//remove previous builds]
+		document.getElementById("presentation").innerHTML = '';
+  		
+		calculateAll(mychars)
+		
+		document.getElementById("presentation").innerHTML += '<hr/>';
+  		
+	}
+
+	
+	function printteam(team){
+	
+			for( let i=0 ; i<  team.length; i++){
+				let v= team[i];
+				if(v!=null){
+					document.getElementById("presentation").innerHTML += ' ' +v.name+'('+v.type+')';
+				}
+			}
+			document.getElementById("presentation").innerHTML += '<br>' 
+
+	}
+	
+	
 
 	
 	let rawchars=[ 
@@ -2106,140 +2217,5 @@
 ['Zommari','', /*		*/ '',		],
 ['Zommari','', /*		*/ '',		],
 		]
-	
-	function setupdata(){
-		//populate the all chars structure
-		for(let i=0; i< rawchars.length; i++){
-			
-			rawchars[i][0]=rawchars[i][0].replace(/\s/g, '');
-			rawchars[i][1]=rawchars[i][1].replace(/\s/g, '');
-			
-			
-			if(rawchars[i][0].length >0 && rawchars[i][1].length >0){ 
-			
-				let main = allchars[rawchars[i][0]]
-				if(main == null){
-					allchars[rawchars[i][0]]= new Array();
-					main = allchars[rawchars[i][0]]
-				}
-				
-				main.push({name: rawchars[i][1], type: rawchars[i][2], prc: rawchars[i][3] });
-			}
-		}
-		
-		
-		for (let m in allchars){
-			
-			
-			document.getElementById( 'inputdata' ).innerHTML 
-				+= "<label onclick='addcharval(this)'> "+m+"</label>, "
-	
-		} 
-		
-	}
-	
-	function addcharval(char){
-		document.getElementById( 'ownchars' ).value += '\n'+ char.textContent.trim();
-	}
-    
-
-	
-
-
-	let teamsize = 6
-	var result = Array(teamsize)
-	
-	function combine(input, len, start) {
-	  if(len === 0) {
-	    printteam(result.slice())
-	    return;
-	  }
-	  for (let i = start; i <= input.length - len; i++) {
-	    result[result.length - len] = input[i];
-	    combine(input, len-1, i+1 );
-	  }
-	}
-	
-	
-	function calculateTeam() {
-  		//parse the data from document.getElementById("ownchars").text  into mychars array
-  		
-  		var area = document.getElementById("ownchars");             
-		var mychars = area.value.replaceAll(" ","").replace(/\t/g,"").replace(/\r\n/g,"\n").split("\n");
-		
-		//remove previous builds]
-		document.getElementById("presentation").innerHTML = '';
-  		
-		//calculatee new builds
-		combine(mychars, teamsize, 0)
-		
-		document.getElementById("presentation").innerHTML += '<hr/>';
-  		
-	}
-	
-	function isBound(main, bound){
-
-		if(allchars[main] ==null) return false;
-		var bonds = allchars[main];
-		
-		
-		for(let i=0; i< bonds.length; i++){
-			
-			if(bonds[i].name == bound){
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	function teamValid(team){
-
-		for(let i=1;i< teamsize; i++){
-			if(!isBound(team[0],team[i])) return false;
-		}
-		
-		return true;
-	}
-	
-	function teamStats(team){
-		let atk = 0;
-		let hp=0;
-		let armor = 0;
-		
-		var bonds = allchars[team[0]];
-		
-		for(let k=1; k<team.length; k++){
-			
-			for(let i=0; i< bonds.length; i++){
-			
-				if(bonds[i].name == team[k]){
-					
-					if (bonds[i].type == 'ATK'){
-						atk += 1;
-					} else if (bonds[i].type == 'HP'){
-						hp += 1;
-					} else if (bonds[i].type == 'Armor'){
-						armor += 1;
-					}
-
-				}
-			}
-		}
-			
-
-		
-		return ' ATK: '+atk +
-			   ' HP: '+hp +
-			   ' Armor: '+armor ;
-	}
-	
-	function printteam(team){
-	
-		if( teamValid(team) ){
-			document.getElementById("presentation").innerHTML += team+' '+ teamStats(team)+'<br/>';
-		}
-	}
-	
 	
 	
