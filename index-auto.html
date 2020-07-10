@@ -1,0 +1,77 @@
+<html>
+<head>
+
+
+
+<script src="bleach.js"></script>
+
+<style>
+.button {
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button1 {background-color: #4CAF50;} /* Green */
+.button2 {background-color: #008CBA;} /* Blue */
+
+
+.container {
+  justify-content: center;
+  padding-left: 15%;
+  padding-right: 15%;
+}
+.center {
+#  width: 800px;
+}
+
+
+</style>
+
+</head>
+
+<body onload="setupdata()">
+
+<div class="container">
+
+	<div class="center" id="instructions" >
+	Click your characters below, add one character per line. Some characters are provided as example data  </div>
+
+	<hr >
+	<div class="center" id="inputdata"></div>
+	<div class="center" id="input-data">
+		<textarea id="ownchars" rows="40" cols="30" >Aizen
+ArrancarAizen
+Barragan
+NewYearByakuya
+ArrancarGin
+Grimmjowv2
+Halibel
+DangaiIchigo
+VastoLordeIchigo
+SwimsuitIchigo
+Jinta
+Kuukaku
+AdultNel
+SwimsuitNel
+SwimsuitNemu
+Nnoitra
+</textarea>
+		<button class="button button2" onclick="calculateTeam()">Calculate Team</button>
+	</div>
+	
+	<hr >
+
+	<div class="center" id="presentation"></div>
+	
+</div>
+
+</body>
+
+</html>

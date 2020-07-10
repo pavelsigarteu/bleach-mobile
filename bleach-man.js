@@ -7,6 +7,9 @@
 		
 	
 			}
+			
+			    
+	var selected = {};
 
 	function setupdata(){
 		//populate the all chars structure
@@ -37,88 +40,101 @@
 	
 		} 
 		
+		initArea()	   
+		
 	}
 	
-	function addcharval(char){
-		document.getElementById( 'ownchars' ).value += '\n'+ char.textContent.trim();
-	}
-    
-
-	
-
-	let teamcount = 1
-	let teamsize = 6
-	let allteamssize = teamsize * teamcount
-	
-	var result = Array(allteamssize)
-	
-	function combine(input, len, start) {
-	  if(len === 0) {
-	    printteam(result.slice())
-	    return;
-	  }
-	  for (let i = start; i <= input.length - len; i++) {
-	    result[result.length - len] = input[i];
-	    combine(input, len-1, i+1 );
-	  }
+	function clear(target){
+		document.getElementById(target).innerHTML = "";
 	}
 	
 	
-
-	const calculateTeamFor = (main, havebonds) => {
-
-        if(havebonds.length >0 ){
-
-            document.getElementById("presentation").innerHTML += '<p>Main '+ main+'<br/>';
-            combine(havebonds, teamsize -1, 0);
+	function add(target, usable, updates){
+		for(let i=0 ; i< usable.length; i++){
+			document.getElementById(target).innerHTML += "<li onclick='selectLI(this,\""+target+"\",\""+updates+"\")'>"+usable[i]+"</li>";
+		}
+	}
+	
+	function bonds(target){
+		
+		let sel = selected[target];
+		
+        if(sel == null ){
+            return [];
         }
-		
-	}
-
-
-	const calculateAll = (arr) => {
-		
-		for(let i=0; i< arr.length; i++){
+        var ret = [];
+		var missing = [];
+		for(let i=0; i< allchars[sel].length; i++){
 			
-			let main = arr[i];
-			let bonds = allchars[main];
-			if( bonds!= null && bonds.length >= teamsize -1 ){
-			
-				calculateTeamFor(main, bonds.filter(x => arr.includes(x.name)))
+			if(mychars.includes(allchars[sel][i].name)){
+				ret.push( allchars[sel][i].name +  ' ' + allchars[sel][i].type + ' ' + allchars[sel][i].prc )
+			}else{
+				missing.push( allchars[sel][i].name +  ' ' + allchars[sel][i].type + ' ' + allchars[sel][i].prc )
 			}
+		}
+		ret.push('-----------------')
+		ret = ret.concat(missing)
+		return ret;
+	}
+	
+	
+	function update (target){
+		
+		//initially i wanted to make multiple buckets that update each other when you select; chnaged my mind ... human can do easyer this
+		switch (target){
+			
+			case 'm1b0' : clear('m1b0'); add('m1b0', mychars, 'm1b1');
+			//case 'm1b1' : clear('m1b1'); add('m1b1', bonds('m1b0'), 'm1b2')
+			case 'm1b1' : clear('m1b1'); add('m1b1', bonds('m1b0'), '-')
+			//case 'm1b2' : clear('m1b2'); add('m1b2', bonds('m1b0').filter(n => ![selected['m1b1']].includes(n)), 'm1b3' )
+			
+			case 'm2b0' : clear('m2b0'); add('m2b0', mychars, 'm2b1');
+			case 'm2b1' : clear('m2b1'); add('m2b1', bonds('m2b0'), '-')
+			
+			case 'm3b0' : clear('m3b0'); add('m3b0', mychars, 'm3b1');
+			case 'm3b1' : clear('m3b1'); add('m3b1', bonds('m3b0'), '-')
 		}
 	}
 	
 	
-	function calculateTeam() {
-  		//parse the data from document.getElementById("ownchars").text  into mychars array
-  		
-  		var area = document.getElementById("ownchars");             
-		var mychars = area.value.replaceAll(" ","").replace(/\t/g,"").replace(/\r\n/g,"\n").split("\n");
-		
-		//remove previous builds]
-		document.getElementById("presentation").innerHTML = '';
-  		
-		calculateAll(mychars)
-		
-		document.getElementById("presentation").innerHTML += '<hr/>';
-  		
-	}
-
 	
-	function printteam(team){
-	
-			for( let i=0 ; i<  team.length; i++){
-				let v= team[i];
-				if(v!=null){
-					document.getElementById("presentation").innerHTML += ' ' +v.name+'('+v.type+')';
-				}
-			}
-			document.getElementById("presentation").innerHTML += '<br>' 
-
+	function addcharval(char){
+		var area = document.getElementById("ownchars");    
+		area.value += '\n'+ char.textContent.trim();
+		
+		initArea()	         
 	}
 	
 	
+	var mychars = []
+	
+	function initArea(){
+		
+		var area = document.getElementById("ownchars");   
+		mychars = area.value.replaceAll(" ","").replace(/\t/g,"").replace(/\r\n/g,"\n").split("\n");
+		
+		update('m1b0', mychars)
+		update('m2b0', mychars)
+		update('m3b0', mychars)
+	}
+	
+	
+
+	
+
+    
+ 	function selectLI(event, crt, target) {
+
+		event.classList.toggle('selected');
+		
+        selected[crt] = event.innerText;
+		update(target);
+		
+    }
+
+
+
+
 
 	
 	let rawchars=[ 
